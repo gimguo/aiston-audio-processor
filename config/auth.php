@@ -112,4 +112,19 @@ return [
 
     'password_timeout' => env('AUTH_PASSWORD_TIMEOUT', 10800),
 
+    /*
+    |--------------------------------------------------------------------------
+    | API Tokens
+    |--------------------------------------------------------------------------
+    |
+    | Here you may define the valid API tokens for your application.
+    | These tokens are used for API authentication.
+    |
+    */
+
+    'api_tokens' => [
+        env('API_TOKEN_1', 'test-token-123'),
+        env('API_TOKEN_2', 'demo-token-456'),
+    ],
+
 ];

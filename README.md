@@ -1,61 +1,392 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Aiston Audio Processor
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+[![GitHub Repository](https://img.shields.io/badge/GitHub-gimguo%2Faiston--audio--processor-blue?logo=github)](https://github.com/gimguo/aiston-audio-processor)
+[![Laravel](https://img.shields.io/badge/Laravel-12.25.0-red?logo=laravel)](https://laravel.com)
+[![PHP](https://img.shields.io/badge/PHP-8.4+-777BB4?logo=php)](https://php.net)
+[![PostgreSQL](https://img.shields.io/badge/PostgreSQL-17-336791?logo=postgresql)](https://postgresql.org)
+[![Docker](https://img.shields.io/badge/Docker-Ready-2496ED?logo=docker)](https://docker.com)
 
-## About Laravel
+Мини backend-сервис для обработки аудиозаписей разговоров диспетчеров с имитацией этапов транскрибации, диоризации и оценки качества разговора.
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+## Описание
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+Сервис принимает задачи через API с аутентификацией по токену, хранит их в базе данных PostgreSQL и периодически проверяет статус выполнения с использованием планировщика и очередей. При завершении задачи данные передаются в фейковую LLM-систему для оценки качества, а результаты сохраняются в БД.
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+## Основные возможности
 
-## Learning Laravel
+- ✅ **API для работы с задачами** - создание и получение статуса задач
+- ✅ **Аутентификация по токену** - защита всех API эндпоинтов
+- ✅ **Фейковая транскрибация и диоризация** - имитация обработки аудио
+- ✅ **Оценка качества через LLM** - анализ разговоров с детальными метриками
+- ✅ **Планировщик задач** - автоматическая проверка статуса каждые 5 минут
+- ✅ **Система очередей** - асинхронная обработка задач
+- ✅ **Логирование операций** - детальные логи всех обращений к сервисам
+- ✅ **Unit тесты** - покрытие основных сценариев
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+## Технический стек
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+- **Laravel 12.25.0** - основной фреймворк
+- **PostgreSQL** - база данных
+- **Docker** - контейнеризация
+- **Laravel Queues** - система очередей
+- **Laravel Scheduler** - планировщик задач
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+## Установка и запуск
 
-## Laravel Sponsors
+### Требования
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+- Docker и Docker Compose
 
-### Premium Partners
+### Быстрый старт
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+1. **Клонирование репозитория**
+```bash
+git clone git@github.com:gimguo/aiston-audio-processor.git
+cd aiston-audio-processor
+```
 
-## Contributing
+2. **Настройка окружения**
+```bash
+# Копируем файл конфигурации
+cp .env.example .env
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+# Файл .env.example уже содержит все необходимые настройки
+# При необходимости можете изменить API токены или другие параметры
+```
 
-## Code of Conduct
+3. **Запуск через Docker**
+```bash
+# Запуск контейнеров
+docker compose up -d
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+# Установка зависимостей
+docker compose exec laravel.test composer install
 
-## Security Vulnerabilities
+# Генерация ключа приложения
+docker compose exec laravel.test php artisan key:generate
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+# Запуск миграций
+docker compose exec laravel.test php artisan migrate
 
-## License
+# Запуск очередей (в отдельном терминале)
+docker compose exec laravel.test php artisan queue:work
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+# Запуск планировщика (в отдельном терминале)
+docker compose exec laravel.test php artisan schedule:work
+```
+
+**Готово!** Приложение доступно по адресу http://localhost
+
+4. **Быстрая проверка работоспособности**
+```bash
+# Создание тестовой задачи
+curl -X POST http://localhost/api/tasks \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer test-token-123" \
+  -d '{"audio_url": "https://example.com/test.wav"}'
+
+# Проверка списка задач
+curl -X GET http://localhost/api/tasks \
+  -H "Authorization: Bearer test-token-123"
+
+# Запуск тестов
+docker compose exec laravel.test php artisan test
+```
+
+
+
+## API Документация
+
+### Аутентификация
+
+Все API запросы требуют токен аутентификации. Токен можно передать:
+- В заголовке `Authorization: Bearer YOUR_TOKEN`
+- В заголовке `X-API-Token: YOUR_TOKEN`
+
+**Доступные токены по умолчанию:**
+- `test-token-123`
+- `demo-token-456`
+
+### Эндпоинты
+
+#### POST /api/tasks
+Создание новой задачи на обработку аудио.
+
+**Параметры:**
+```json
+{
+  "audio_url": "https://example.com/audio.wav",     // URL аудиофайла (опционально)
+  "audio_identifier": "AUDIO_123",                 // Идентификатор аудио (опционально)
+  "parameters": {                                  // Параметры обработки (опционально)
+    "quality": "high",
+    "format": "wav"
+  },
+  "metadata": {                                    // Метаданные (опционально)
+    "source": "api",
+    "client_id": "uuid"
+  }
+}
+```
+
+**Ответ:**
+```json
+{
+  "success": true,
+  "message": "Audio processing task created successfully",
+  "data": {
+    "id": 1,
+    "audio_url": "https://example.com/audio.wav",
+    "status": "new",
+    "created_at": "2025-08-20T04:43:46.000000Z"
+  }
+}
+```
+
+#### GET /api/tasks
+Получение списка задач с пагинацией и фильтрацией.
+
+**Параметры запроса:**
+- `status` - фильтр по статусу (new, processing, completed, failed, evaluated)
+- `per_page` - количество записей на страницу (по умолчанию 15, максимум 100)
+
+**Ответ:**
+```json
+{
+  "success": true,
+  "data": [...],
+  "pagination": {
+    "current_page": 1,
+    "last_page": 1,
+    "per_page": 15,
+    "total": 5
+  }
+}
+```
+
+#### GET /api/tasks/{id}
+Получение детальной информации о задаче.
+
+**Ответ:**
+```json
+{
+  "success": true,
+  "data": {
+    "id": 1,
+    "audio_url": "https://example.com/audio.wav",
+    "status": "evaluated",
+    "transcription_result": {
+      "transcription_data": [
+        {
+          "speaker": "S1",
+          "start": 0.0,
+          "end": 5.0,
+          "text": "Добрый день, как я могу помочь?",
+          "confidence": 0.95
+        }
+      ]
+    },
+    "quality_assessment": {
+      "overall_score": 85.5,
+      "score_grade": "Good",
+      "detailed_scores": {
+        "politeness": 90,
+        "clarity": 85,
+        "responsiveness": 80
+      }
+    },
+    "service_logs": [...]
+  }
+}
+```
+
+## Структура базы данных
+
+### Таблицы
+
+1. **audio_tasks** - основная таблица задач
+2. **transcription_results** - результаты транскрибации и диоризации
+3. **quality_assessments** - результаты оценки качества
+4. **service_logs** - логи обращений к внешним сервисам
+5. **jobs** - очередь задач Laravel
+
+### Статусы задач
+
+- `new` - новая задача
+- `processing` - обрабатывается
+- `completed` - транскрибация завершена
+- `failed` - ошибка обработки
+- `evaluated` - оценка качества завершена
+
+## Фейковые сервисы
+
+### TranscriptionService
+Имитирует работу сервиса транскрибации и диоризации:
+- Генерирует реалистичные диалоги между диспетчером и клиентом
+- Возвращает данные в формате с временными метками и спикерами
+- Имитирует различные статусы обработки
+
+### QualityAssessmentService
+Имитирует LLM-систему для оценки качества:
+- Анализирует вежливость, ясность, отзывчивость
+- Оценивает решение проблем и профессионализм
+- Генерирует рекомендации и общую оценку
+
+## Планировщик и очереди
+
+### Команды
+
+```bash
+# Проверка статуса задач (запускается каждые 5 минут)
+docker compose exec laravel.test php artisan tasks:check-status
+
+# Запуск планировщика
+docker compose exec laravel.test php artisan schedule:work
+
+# Обработка очередей
+docker compose exec laravel.test php artisan queue:work
+```
+
+### Настройка cron (для продакшена)
+
+```bash
+# Для Docker окружения
+* * * * * cd /path-to-your-project && docker compose exec laravel.test php artisan schedule:run >> /dev/null 2>&1
+
+# Или для локального окружения
+* * * * * cd /path-to-your-project && php artisan schedule:run >> /dev/null 2>&1
+```
+
+## Тестирование
+
+### Запуск тестов
+
+```bash
+# Все тесты
+docker compose exec laravel.test php artisan test
+
+# Конкретный тест
+docker compose exec laravel.test php artisan test --filter TaskApiTest
+
+# С покрытием
+docker compose exec laravel.test php artisan test --coverage
+```
+
+### Примеры тестов
+
+- Создание задач с валидными токенами
+- Отклонение запросов без аутентификации
+- Валидация входных данных
+- Фильтрация и пагинация
+- Получение детальной информации о задачах
+
+## Логирование
+
+Все операции логируются в:
+- **Laravel Log** - общие события приложения
+- **service_logs** таблица - детальные логи обращений к сервисам
+
+Логи включают:
+- Время выполнения операций
+- Данные запросов и ответов
+- Ошибки и их детали
+- Статистику обработки
+
+## Мониторинг
+
+### Проверка состояния
+
+```bash
+# Статус очередей
+docker compose exec laravel.test php artisan queue:monitor
+
+# Список запланированных задач
+docker compose exec laravel.test php artisan schedule:list
+
+# Проверка "зависших" задач
+docker compose exec laravel.test php artisan tasks:check-status --limit=50
+```
+
+### Метрики
+
+Сервис автоматически отслеживает:
+- Время обработки задач
+- Количество успешных/неудачных операций
+- Статистику по спикерам и продолжительности разговоров
+- Распределение оценок качества
+
+## Конфигурация
+
+### Переменные окружения
+
+```env
+# API токены
+API_TOKEN_1=your-secure-token-1
+API_TOKEN_2=your-secure-token-2
+
+# База данных
+DB_CONNECTION=pgsql
+DB_HOST=pgsql
+DB_PORT=5432
+DB_DATABASE=aiston_audio
+DB_USERNAME=sail
+DB_PASSWORD=password
+
+# Очереди
+QUEUE_CONNECTION=database
+
+# Логирование
+LOG_CHANNEL=stack
+LOG_LEVEL=debug
+```
+
+## Архитектура
+
+```
+┌─────────────────┐    ┌──────────────────┐    ┌─────────────────┐
+│   API Client    │───▶│   TaskController │───▶│   AudioTask     │
+└─────────────────┘    └──────────────────┘    └─────────────────┘
+                                │                        │
+                                ▼                        ▼
+                       ┌──────────────────┐    ┌─────────────────┐
+                       │ ProcessAudioTask │───▶│ TranscriptionSvc│
+                       │      (Job)       │    └─────────────────┘
+                       └──────────────────┘              │
+                                │                        ▼
+                                ▼               ┌─────────────────┐
+                       ┌──────────────────┐    │QualityAssessment│
+                       │   Scheduler      │    │    Service      │
+                       │  (5 minutes)     │    └─────────────────┘
+                       └──────────────────┘
+```
+
+## Возможные улучшения
+
+1. **Аутентификация** - интеграция с OAuth2/JWT
+2. **Кэширование** - Redis для часто запрашиваемых данных
+3. **Файловое хранилище** - S3 для аудиофайлов
+4. **Уведомления** - webhook'и о завершении обработки
+5. **Метрики** - интеграция с Prometheus/Grafana
+6. **API документация** - Swagger/OpenAPI
+7. **Rate limiting** - ограничение частоты запросов
+
+## Репозиторий
+
+**GitHub**: [gimguo/aiston-audio-processor](https://github.com/gimguo/aiston-audio-processor)
+
+```bash
+# Клонирование по SSH
+git clone git@github.com:gimguo/aiston-audio-processor.git
+
+# Клонирование по HTTPS
+git clone https://github.com/gimguo/aiston-audio-processor.git
+```
+
+## Лицензия
+
+MIT License
+
+## Поддержка
+
+Для вопросов и предложений:
+- Создавайте [Issues](https://github.com/gimguo/aiston-audio-processor/issues) в репозитории
+- Отправляйте [Pull Requests](https://github.com/gimguo/aiston-audio-processor/pulls) с улучшениями
